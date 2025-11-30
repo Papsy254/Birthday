@@ -130,7 +130,7 @@ $('document').ready(function(){
 		var randleft = 1000*Math.random();
 		var randtop = 500*Math.random();
 		$('#b11').animate({left:randleft,bottom:randtop},10000,function(){
-			loopTen();
+			loopEleven();
 		});
 	}
 
@@ -138,7 +138,7 @@ $('document').ready(function(){
 		var randleft = 1000*Math.random();
 		var randtop = 500*Math.random();
 		$('#b12').animate({left:randleft,bottom:randtop},10000,function(){
-			loopTen();
+			loopTwelve();
 		});
 	}
 
@@ -193,31 +193,31 @@ $('document').ready(function(){
 	$('#wish_message').click(function(){
 		 vw = $(window).width()/2;
 
-		$('#b1,#b2,#b3,#b4,#b5,#b6,#b7,#b8,#b9,#b10').stop();
-		$('#b1').attr('id','b12');
-		$('#b2').attr('id','b24')
-		$('#b3').attr('id','b36')
-		$('#b4').attr('id','b48')
-		$('#b5').attr('id','b60')
-		$('#b6').attr('id','b72')
-		$('#b7').attr('id','b84')
-		$('#b8').attr('id','b96')
-		$('#b9').attr('id','b108')
-		$('#b10').attr('id','b120')
-		$('#b11').attr('id','b132')
-		$('#b12').attr('id','b144')
-		$('#b12').animate({top:240, left: vw-360},500);
-		$('#b24').animate({top:240, left: vw-300},500);
-		$('#b36').animate({top:240, left: vw-240},500);
-		$('#b48').animate({top:240, left: vw-180},500);
-		$('#b60').animate({top:240, left: vw-120},500);
-		$('#b72').animate({top:240, left: vw-60},500);
-		$('#b84').animate({top:240, left: vw+60},500);
-		$('#b96').animate({top:240, left: vw+120},500);
-		$('#b108').animate({top:240, left: vw+180},500);
-		$('#b120').animate({top:240, left: vw+240},500);
-		$('#b132').animate({top:240, left: vw+300},500);
-		$('#b144').animate({top:240, left: vw+350},500);
+		$('#b1,#b2,#b3,#b4,#b5,#b6,#b7,#b8,#b9,#b10,#b11,#b12').stop();
+		$('#b1').attr('id','b13');
+		$('#b2').attr('id','b26')
+		$('#b3').attr('id','b39')
+		$('#b4').attr('id','b52')
+		$('#b5').attr('id','b65')
+		$('#b6').attr('id','b78')
+		$('#b7').attr('id','b91')
+		$('#b8').attr('id','b104')
+		$('#b9').attr('id','b117')
+		$('#b10').attr('id','b130')
+		$('#b11').attr('id','b143')
+		$('#b12').attr('id','b156')
+		$('#b13').animate({top:240, left: vw-360},500);
+		$('#b26').animate({top:240, left: vw-300},500);
+		$('#b39').animate({top:240, left: vw-240},500);
+		$('#b52').animate({top:240, left: vw-180},500);
+		$('#b65').animate({top:240, left: vw-120},500);
+		$('#b78').animate({top:240, left: vw-60},500);
+		$('#b91').animate({top:240, left: vw+60},500);
+		$('#b104').animate({top:240, left: vw+120},500);
+		$('#b117').animate({top:240, left: vw+180},500);
+		$('#b130').animate({top:240, left: vw+240},500);
+		$('#b143').animate({top:240, left: vw+300},500);
+		$('#b156').animate({top:240, left: vw+360},500);
 		$('.balloons').css('opacity','0.9');
 		$('.balloons h2').fadeIn(3000);
 		$(this).fadeOut('slow').delay(3000).promise().done(function(){
@@ -237,19 +237,14 @@ $('document').ready(function(){
 			$("p:nth-child("+i+")").fadeOut(2000).delay(1700).promise().done(function(){
 			i=i+1;
 			$("p:nth-child("+i+")").fadeIn(2000).delay(2500);
-			if(i == 50){
+if(i == 50){
     $("p:nth-child(49)").fadeOut('slow').promise().done(function () {
-        $('.cake').fadeIn('fast');
+        
+        // After the last message, restart automatically
+        $('.message').fadeOut(1500, function(){
+            resetAll(); // <-- restart beginning
+        });
 
-        // Ask user whether to review the message
-        var review = confirm("Do you want to review the birthday message again? Click OK to replay or Cancel to leave it as is.");
-
-        if(review){
-            // Reset all paragraphs and start over
-            $(".message p").hide(); // hide all paragraphs
-            msgLoop(0); // restart from the first paragraph
-        } 
-        // else do nothing, page continues as is
     });
 }
 
@@ -266,7 +261,61 @@ $('document').ready(function(){
 	});
 });
 
-
-
-
 //alert('hello');
+
+function resetAll() {
+    // Stop animations
+    $('.balloons').stop(true, true);
+
+    // Reset balloon positions
+    for (let i = 1; i <= 12; i++) {
+        $('#b' + i).removeClass().removeAttr("style");
+    }
+
+    // Reset body color
+    $('body').removeClass('peach peach-after').css('background-color', '');
+
+    // Reset bulbs
+    $('.bulb').removeClass(function(index, className) {
+        return (className.match(/(^|\s)bulb-glow-\S+/g) || []).join(' ');
+    });
+
+    // Hide elements
+    $('.cake').hide();
+    $('.fuego').hide();
+    $('.message').hide();
+    $('.balloon-border').css({top: 0});
+
+    // Reset banner
+    $('.bannar').removeClass('bannar-come');
+
+    // Reset paragraphs
+    $(".message p").hide();
+
+    // Audio reset
+    var audio = $('.song')[0];
+    audio.pause();
+    audio.currentTime = 0;
+
+    // Reset buttons
+    $('#play, #bannar_coming, #balloons_flying, #cake_fadein, #light_candle, #wish_message, #story')
+        .hide();
+    $('#turn_on').show();
+
+    // Reset balloon IDs changed by wish_message
+    $("#b13").attr("id", "b1");
+    $("#b26").attr("id", "b2");
+    $("#b39").attr("id", "b3");
+    $("#b52").attr("id", "b4");
+    $("#b65").attr("id", "b5");
+    $("#b78").attr("id", "b6");
+    $("#b91").attr("id", "b7");
+    $("#b104").attr("id", "b8");
+    $("#b117").attr("id", "b9");
+    $("#b130").attr("id", "b10");
+    $("#b143").attr("id", "b11");
+    $("#b156").attr("id", "b12");
+
+    // Scroll to top (optional)
+    window.scrollTo(0, 0);
+}
