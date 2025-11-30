@@ -1315,6 +1315,7 @@ audio {
         background-color: #466baf;
     }
 
+#replay { display: none; }
 
 
     /*controlling tablet width*/

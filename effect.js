@@ -4,17 +4,17 @@ $(window).load(function(){
 });
 $('document').ready(function(){
 		var vw;
-		$(window).resize(function(){
-			 vw = $(window).width()/2;
-			$('#b1,#b2,#b3,#b4,#b5,#b6,#b7').stop();
-			$('#b11').animate({top:240, left: vw-350},500);
-			$('#b22').animate({top:240, left: vw-250},500);
-			$('#b33').animate({top:240, left: vw-150},500);
-			$('#b44').animate({top:240, left: vw-50},500);
-			$('#b55').animate({top:240, left: vw+50},500);
-			$('#b66').animate({top:240, left: vw+150},500);
-			$('#b77').animate({top:240, left: vw+250},500);
-		});
+		$(window).resize(function () {
+    vw = $(window).width() / 2;
+
+    // Reposition letter balloons (if present)
+    $('.letter-balloon').each(function (index) {
+        $(this).stop().animate({
+            top: 240,
+            left: (vw - 360) + ((index + 1) * 60)
+        }, 500);
+    });
+});		
 
 	$('#turn_on').click(function(){
 		$('#bulb_yellow').addClass('bulb-glow-yellow');
@@ -170,7 +170,7 @@ $('document').ready(function(){
 		loopEleven();
 		loopTwelve();
 		
-		$(this).fadeOut('slow').delay(5000).promise().done(function(){
+	$(this).fadeOut('slow').delay(5000).promise().done(function(){
 			$('#cake_fadein').fadeIn('slow');
 		});
 	});	
@@ -188,42 +188,28 @@ $('document').ready(function(){
 			$('#wish_message').fadeIn('slow');
 		});
 	});
-
 		
 	$('#wish_message').click(function(){
-		 vw = $(window).width()/2;
+		vw = $(window).width() / 2;
+		 // CLEAR previous letter balloons first
+	$('.letter-balloon').remove();
 
-		$('#b1,#b2,#b3,#b4,#b5,#b6,#b7,#b8,#b9,#b10,#b11,#b12').stop();
-		$('#b1').attr('id','b13');
-		$('#b2').attr('id','b26')
-		$('#b3').attr('id','b39')
-		$('#b4').attr('id','b52')
-		$('#b5').attr('id','b65')
-		$('#b6').attr('id','b78')
-		$('#b7').attr('id','b91')
-		$('#b8').attr('id','b104')
-		$('#b9').attr('id','b117')
-		$('#b10').attr('id','b130')
-		$('#b11').attr('id','b143')
-		$('#b12').attr('id','b156')
-		$('#b13').animate({top:240, left: vw-360},500);
-		$('#b26').animate({top:240, left: vw-300},500);
-		$('#b39').animate({top:240, left: vw-240},500);
-		$('#b52').animate({top:240, left: vw-180},500);
-		$('#b65').animate({top:240, left: vw-120},500);
-		$('#b78').animate({top:240, left: vw-60},500);
-		$('#b91').animate({top:240, left: vw+60},500);
-		$('#b104').animate({top:240, left: vw+120},500);
-		$('#b117').animate({top:240, left: vw+180},500);
-		$('#b130').animate({top:240, left: vw+240},500);
-		$('#b143').animate({top:240, left: vw+300},500);
-		$('#b156').animate({top:240, left: vw+360},500);
-		$('.balloons').css('opacity','0.9');
-		$('.balloons h2').fadeIn(3000);
-		$(this).fadeOut('slow').delay(3000).promise().done(function(){
-			$('#story').fadeIn('slow');
-		});
-	});
+	let letters = ["H","B","D","M","Y","K","A","S","M","A","L","L"];
+
+		for (let i = 1; i <= 12; i++) {
+    		let newBalloon = $('#b'+i).clone();
+    		newBalloon.addClass('letter-balloon');
+    		newBalloon.attr('id','letter'+i);
+    
+    	// Position them in the row for writing
+    		newBalloon.css({
+        		position: 'absolute',
+        		top: '240px',
+        		left: (vw - 360) + (i * 60) + 'px' });
+
+    // Insert into DOM
+    $('body').append(newBalloon);
+} });
 	
 	$('#story').click(function(){
 		$(this).fadeOut('slow');
@@ -242,9 +228,10 @@ if(i == 50){
         
         // After the last message, restart automatically
         $('.message').fadeOut(1500, function(){
-            resetAll(); // <-- restart beginning
-        });
-
+			$('#replay').fadeIn();
+			$('#replay').click(function(){
+				resetAll();
+		    });    });
     });
 }
 
@@ -264,58 +251,49 @@ if(i == 50){
 //alert('hello');
 
 function resetAll() {
-    // Stop animations
-    $('.balloons').stop(true, true);
 
-    // Reset balloon positions
+    // Stop ALL animations everywhere
+    $('*').stop(true, true);
+
+    // Restore original 12 main balloons
     for (let i = 1; i <= 12; i++) {
-        $('#b' + i).removeClass().removeAttr("style");
+        $('#b' + i)
+            .attr("style", "")
+            .removeClass()
+            .addClass('balloons')
+            .show();
     }
 
-    // Reset body color
-    $('body').removeClass('peach peach-after').css('background-color', '');
+    // Remove ALL cloned letter balloons
+    $('.letter-balloon').remove();
 
-    // Reset bulbs
-    $('.bulb').removeClass(function(index, className) {
-        return (className.match(/(^|\s)bulb-glow-\S+/g) || []).join(' ');
+    // Reset all balloon borders
+    $('.balloon-border').attr("style","");
+
+    // Restore background
+    $('body').attr("style","").removeClass();
+
+    // Turn off bulbs
+    $('.bulb').attr("class", function(_, c){
+        return c.replace(/bulb-glow-\S+/g,'');
     });
 
-    // Hide elements
-    $('.cake').hide();
-    $('.fuego').hide();
-    $('.message').hide();
-    $('.balloon-border').css({top: 0});
+    // Hide cake, flames, banner, messages
+    $('.cake, .fuego, .message, .bannar').hide();
 
-    // Reset banner
-    $('.bannar').removeClass('bannar-come');
-
-    // Reset paragraphs
+    // Hide paragraphs
     $(".message p").hide();
 
-    // Audio reset
+    // Reset audio
     var audio = $('.song')[0];
     audio.pause();
     audio.currentTime = 0;
 
     // Reset buttons
-    $('#play, #bannar_coming, #balloons_flying, #cake_fadein, #light_candle, #wish_message, #story')
+    $('#play, #bannar_coming, #balloons_flying, #cake_fadein, #light_candle, #wish_message, #story, #replay')
         .hide();
     $('#turn_on').show();
 
-    // Reset balloon IDs changed by wish_message
-    $("#b13").attr("id", "b1");
-    $("#b26").attr("id", "b2");
-    $("#b39").attr("id", "b3");
-    $("#b52").attr("id", "b4");
-    $("#b65").attr("id", "b5");
-    $("#b78").attr("id", "b6");
-    $("#b91").attr("id", "b7");
-    $("#b104").attr("id", "b8");
-    $("#b117").attr("id", "b9");
-    $("#b130").attr("id", "b10");
-    $("#b143").attr("id", "b11");
-    $("#b156").attr("id", "b12");
-
-    // Scroll to top (optional)
-    window.scrollTo(0, 0);
+    // Scroll to top
+    $(window).scrollTop(0);
 }
